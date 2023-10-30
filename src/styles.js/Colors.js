@@ -1,0 +1,18 @@
+export default {
+  white: '#fff',
+  black: '#000',
+  primary: '#018DFF',
+  success: '#22bb33',
+  danger: '#bb2124',
+  warning: '#f0ad4e',
+  info: '#5bc0de',
+  light: '#f8f9fa',
+  dark: '#343a40',
+  // clicked: '#e9ecef',
+  clicked: 'rgba(0, 0, 0, 0.05)',
+  transparent: 'transparent',
+  bgBlue: '#6BCFF6',
+  gradientPrimary: ['#018DFF', '#96F499'],
+  lightBackground: '#F2F2F2',
+  darkBackground: '#1B1B1B',
+};
