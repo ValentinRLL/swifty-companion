@@ -1,6 +1,5 @@
 import { UID, SECRET } from '@env';
-import { deleteAccessToken, getAccessToken, setAccessToken } from './storage';
-// import { getAccessToken, setAccessToken } from './storage';
+import { getAccessToken, setAccessToken } from './storage';
 
 const API = 'https://api.intra.42.fr/v2';
 
@@ -10,6 +9,51 @@ const credentials = {
 };
 
 class Api {
+  constructor() {
+    this.queue = [];
+    this.working = false;
+  }
+
+  fetch(type, user) {
+    // remove duplicate type in queue
+    this.queue = this.queue.filter((request) => request.type !== type);
+    return new Promise((resolve, reject) => {
+      this.queue.push({ type, user, retry: 0, resolve, reject });
+      if (!this.working) {
+        this.working = true;
+        this.worker();
+      }
+    });
+  }
+
+  async worker() {
+    while (this.queue.length > 0) {
+      const request = this.queue.shift();
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      try {
+        const response = await this.fetcher(request.type, request.user);
+        request.resolve(response);
+      } catch (err) {
+        if (err.message === '404') {
+          if (request.type === 'users' && !Array.isArray(request.user)) {
+            request.reject('User not found');
+          } else {
+            request.resolve([]);
+          }
+          continue;
+        }
+
+        if (request.retry > 3) {
+          request.reject(err);
+          continue;
+        }
+        this.queue.unshift({ ...request, retry: request.retry + 1 });
+      }
+    }
+
+    this.working = false;
+  }
+
   async getAccessToken() {
     try {
       let currentAccessToken = await getAccessToken();
@@ -33,7 +77,7 @@ class Api {
 
       return currentAccessToken?.access_token;
     } catch (error) {
-      console.error('error fetching access token: ', error);
+      console.error('Error getting access token: ', error);
       throw error;
     }
   }
@@ -58,10 +102,11 @@ class Api {
       return data;
     } catch (error) {
       console.error('Error generating access token:', error);
+      throw error;
     }
   }
 
-  async fetch(type, user) {
+  async fetcher(type, user) {
     try {
       // await deleteAccessToken();
       const accessToken = await this.getAccessToken();
@@ -88,12 +133,12 @@ class Api {
       if (!types.includes(type)) {
         throw new Error('Wrong type');
       }
+
       do {
         const dateBefore = new Date();
         let timeSpendIndex = 0;
 
         lastResult = await (async () => {
-          console.log('1');
           let response = null;
           if (type === 'users') {
             if (Array.isArray(user)) {
@@ -104,15 +149,11 @@ class Api {
           } else {
             response = await fetch(`${API}/${type}?` + new URLSearchParams(params) + `&filter[user_id]=${user}&page=${page}&per_page=${perPage}`, options);
           }
-          console.log('2');
           if (!response.ok) throw new Error(`Network response error ${response.status}: ${response.statusText}`);
-          console.log('3');
 
           timeSpendIndex = response.headers.get('x-secondly-ratelimit-remaining') % 2;
-          console.log('4');
 
           const data = await response.json();
-          console.log('5');
           return data;
         })();
         page++;
@@ -132,7 +173,7 @@ class Api {
 
       return allResults;
     } catch (error) {
-      console.error('There was a problem with the projects fetch operation:', error);
+      console.error('Error during fetch operation:', error);
       throw error;
     }
   }

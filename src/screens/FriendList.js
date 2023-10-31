@@ -1,5 +1,5 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native';
-import React, { useCallback, useState } from 'react';
+import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
 import { getFriendList } from '../api/storage';
 import SingleProfileSearch from '../components/SingleProfileSearch';
 import api from '../api/api';
@@ -9,12 +9,10 @@ import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
 const FriendList = () => {
   const [friends, setFriends] = useState();
-  useFocusEffect(
-    useCallback(() => {
-      getFriendListFromStorage();
-      console.log('rerender');
-    }, [])
-  );
+  const [refreshing, setRefreshing] = useState(false);
+  useEffect(() => {
+    getFriendListFromStorage();
+  }, []);
   const getFriendListFromStorage = async () => {
     const uids = await getFriendList();
     const result = await api.fetch('users', uids);
@@ -23,7 +21,23 @@ const FriendList = () => {
   const displayFriends = () => {
     if (friends) {
       if (friends.length > 0) {
-        return <FlatList data={friends} renderItem={({ item }) => <SingleProfileSearch user={item} />} keyExtractor={(item) => item.id} />;
+        return (
+          <FlatList
+            refreshControl={
+              <RefreshControl
+                onRefresh={async () => {
+                  setRefreshing(true);
+                  await getFriendListFromStorage();
+                  setRefreshing(false);
+                }}
+                refreshing={refreshing}
+              />
+            }
+            data={friends}
+            renderItem={({ item }) => <SingleProfileSearch user={item} />}
+            keyExtractor={(item) => item.id}
+          />
+        );
       } else {
         return <Text>Vous n'avez pas d'amis</Text>;
       }
