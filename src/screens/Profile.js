@@ -9,28 +9,24 @@ import api from '../api/api';
 import Loading from '../components/Loading';
 import { AntDesign } from '@expo/vector-icons';
 import { addFriendInList, deleteFriendFromList, userIsFriend } from '../api/storage';
+import getLocale from '../constants/localization';
 
 const Profile = ({ route, navigation }) => {
-  const [user, setUser] = useState(route.params);
+  const [user, setUser] = useState(route.params.user);
   const [cursus, setCursus] = useState();
   const [projects, setProjects] = useState(null);
-  const uid = route.params.id;
+  const uid = route.params.user.id;
+  const { language, darkMode } = route.params;
+  const currentStyle = darkMode ? darkModeStyles : styles;
   const [selectedCursus, setSelectedCursus] = useState();
   const [isFriend, setIsFriend] = useState(false);
 
   const fetchProjects = async () => {
-    const start = new Date();
     const cursusResult = await api.fetch('cursus_users', uid);
-    const end = new Date();
     setCursus(cursusResult);
     setSelectedCursus(cursusResult[0]);
     const projectsResult = await api.fetch('projects_users', uid);
-    const end2 = new Date();
     setProjects(projectsResult);
-    console.log('cursus_users time', end - start);
-    console.log('project_users time', end2 - end);
-    // console.log('result', result);
-    // console.log('cursus', cursus);
   };
 
   const checkIfFriend = async () => {
@@ -45,15 +41,13 @@ const Profile = ({ route, navigation }) => {
 
   const handleFriend = () => {
     if (isFriend) {
-      // deleteFriend(uid);
       deleteFriendFromList(uid);
       setIsFriend(false);
-      Alert.alert('Ami supprimé', `Vous avez supprimé ${user.login} de votre liste d'amis`, [{ text: 'OK' }]);
+      Alert.alert(getLocale(language, 'friendRemovedTitle'), getLocale(language, 'friendRemoved', [user.login]), [{ text: 'OK' }]);
     } else {
-      // addFriend(uid);
       addFriendInList(uid);
       setIsFriend(true);
-      Alert.alert('Ami ajouté', `Vous avez ajouté ${user.login} à votre liste d'amis`, [{ text: 'OK' }]);
+      Alert.alert(getLocale(language, 'friendAddedTitle'), getLocale(language, 'friendAdded', [user.login]), [{ text: 'OK' }]);
     }
   };
 
@@ -62,7 +56,6 @@ const Profile = ({ route, navigation }) => {
       headerRight: () => <AntDesign name={isFriend ? 'deleteuser' : 'adduser'} size={24} color={isFriend ? Colors.danger : Colors.white} onPress={() => handleFriend()} />,
     });
   }, [navigation, isFriend]);
-  // console.log(user);
 
   const getProjectStatus = (project) => {
     if (project.status === 'finished') {
@@ -78,13 +71,13 @@ const Profile = ({ route, navigation }) => {
 
   const HeaderContent = () => {
     return (
-      <View style={styles.avatarContainer}>
+      <View style={currentStyle.avatarContainer}>
         <Avatar image={user.image.versions.medium} size={125} online={user.location} />
         <View>
           <View>
-            <Text style={{ ...styles.headerText, ...styles.login }}>{capitalize(user.login)}</Text>
-            <Text style={{ ...styles.headerText, ...styles.displayname }}>{user.displayname}</Text>
-            <Text style={styles.headerText}>{getRole(user).join(' ')}</Text>
+            <Text style={{ ...currentStyle.headerText, ...currentStyle.login }}>{capitalize(user.login)}</Text>
+            <Text style={{ ...currentStyle.headerText, ...currentStyle.displayname }}>{user.displayname}</Text>
+            <Text style={currentStyle.headerText}>{getRole(user, language).join(' ')}</Text>
           </View>
         </View>
       </View>
@@ -93,18 +86,20 @@ const Profile = ({ route, navigation }) => {
 
   return (
     <Header content={<HeaderContent />}>
-      <View style={{ flex: 1 }}>
+      <View style={{ ...currentStyle.container, flex: 1 }}>
         <View>
-          {/* <Text style={styles.cursusChoiceText}>Choix du cursus</Text> */}
-          {/* <Text style={styles.cursusChoiceText}>Niveau {15.01}</Text> */}
           {cursus ? (
             <Fragment>
-              <Text style={styles.cursusChoiceText}>
-                {selectedCursus?.cursus?.name} niv. {selectedCursus?.level}
+              <Text style={currentStyle.cursusChoiceText}>
+                {selectedCursus?.cursus?.name} {getLocale(language, 'lvl')} {selectedCursus?.level}
               </Text>
-              <Picker style={styles.picker} selectedValue={selectedCursus?.cursus_id?.toString()} onValueChange={(itemValue, itemIndex) => setSelectedCursus(cursus[itemIndex])}>
+              <Picker
+                style={currentStyle.picker}
+                selectedValue={selectedCursus?.cursus_id?.toString()}
+                onValueChange={(itemValue, itemIndex) => setSelectedCursus(cursus[itemIndex])}
+              >
                 {cursus.map((c) => (
-                  <Picker.Item key={c?.cursus_id?.toString()} label={c?.cursus?.name?.toString()} value={c?.cursus_id?.toString()} />
+                  <Picker.Item key={c?.cursus_id?.toString()} label={c?.cursus?.name?.toString()} value={c?.cursus_id?.toString()} color={darkMode ? Colors.white : Colors.black} />
                 ))}
               </Picker>
             </Fragment>
@@ -113,15 +108,15 @@ const Profile = ({ route, navigation }) => {
           )}
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={styles.categoryTitle}>Projets</Text>
+          <Text style={currentStyle.categoryTitle}>{getLocale(language, 'projects')}</Text>
           {projects ? (
             <FlatList
-              contentContainerStyle={styles.projects}
+              contentContainerStyle={currentStyle.projects}
               data={projects.filter((p) => p.cursus_ids.includes(selectedCursus.cursus_id))}
               renderItem={({ item }) => (
-                <View style={styles.project}>
-                  <Text>{item.project.name}</Text>
-                  <Text style={styles[getProjectStatus(item)]}>{item.final_mark || '-'}</Text>
+                <View style={currentStyle.project}>
+                  <Text style={currentStyle.projectName}>{item.project.name}</Text>
+                  <Text style={currentStyle[getProjectStatus(item)]}>{item.final_mark || '-'}</Text>
                 </View>
               )}
               keyExtractor={(item) => item.project.id}
@@ -129,14 +124,6 @@ const Profile = ({ route, navigation }) => {
           ) : (
             <Loading />
           )}
-          {/* <Text style={styles.categoryTitle}>Projets</Text>
-          <Text>xxxxxxxx</Text>
-          <Text style={styles.categoryTitle}>Skills</Text>
-          <Text>xxxxxxxx</Text>
-          <Text style={styles.categoryTitle}>Expertises</Text>
-          <Text>xxxxxxxx</Text>
-          <Text style={styles.categoryTitle}>Achievements</Text>
-          <Text>xxxxxxxx</Text> */}
         </View>
       </View>
     </Header>
@@ -146,6 +133,7 @@ const Profile = ({ route, navigation }) => {
 export default Profile;
 
 const styles = StyleSheet.create({
+  container: {},
   avatarContainer: {
     padding: 30,
     marginLeft: 10,
@@ -198,5 +186,70 @@ const styles = StyleSheet.create({
   inProgress: {
     color: Colors.warning,
     fontWeight: 'bold',
+  },
+  projectName: {},
+});
+
+const darkModeStyles = StyleSheet.create({
+  container: {
+    backgroundColor: Colors.darkBackground,
+  },
+  avatarContainer: {
+    padding: 30,
+    marginLeft: 10,
+    marginTop: -25,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerText: {
+    marginLeft: 10,
+    color: Colors.white,
+    fontSize: 18,
+  },
+  login: {
+    fontSize: 26,
+    fontWeight: 'bold',
+  },
+  displayname: {
+    fontSize: 22,
+    fontStyle: 'italic',
+  },
+  picker: {
+    marginVertical: -20,
+  },
+  cursusChoiceText: {
+    textAlign: 'center',
+    fontSize: 24,
+    marginTop: 20,
+    color: Colors.white,
+  },
+  categoryTitle: {
+    fontSize: 24,
+    paddingHorizontal: 9,
+    color: Colors.white,
+  },
+  projects: {
+    paddingHorizontal: 10,
+    paddingBottom: 30,
+  },
+  project: {
+    padding: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  validated: {
+    color: Colors.success,
+    fontWeight: 'bold',
+  },
+  notValidated: {
+    color: Colors.danger,
+    fontWeight: 'bold',
+  },
+  inProgress: {
+    color: Colors.warning,
+    fontWeight: 'bold',
+  },
+  projectName: {
+    color: Colors.white,
   },
 });

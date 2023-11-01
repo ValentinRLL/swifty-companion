@@ -11,8 +11,8 @@ export default {
   // clicked: '#e9ecef',
   clicked: 'rgba(0, 0, 0, 0.05)',
   transparent: 'transparent',
-  bgBlue: '#6BCFF6',
+  bgBlue: '#9ed9f5',
   gradientPrimary: ['#018DFF', '#96F499'],
   lightBackground: '#F2F2F2',
-  darkBackground: '#1B1B1B',
+  darkBackground: '#1e293b',
 };

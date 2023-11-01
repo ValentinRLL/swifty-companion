@@ -10,6 +10,7 @@ import FriendList from './src/screens/FriendList';
 import Profile from './src/screens/Profile';
 
 import ProfileList from './src/screens/ProfileList';
+
 const Stack = createNativeStackNavigator();
 
 const MyStack = () => {
@@ -29,21 +30,8 @@ const MyStack = () => {
           headerShown: false,
         }}
       />
-      <Stack.Screen
-        name='ProfileList'
-        component={ProfileList}
-        options={{
-          // headerShown: false,
-          headerTitle: 'Recherche',
-        }}
-      />
-      <Stack.Screen
-        name='FriendList'
-        component={FriendList}
-        options={{
-          headerTitle: `Liste d'amis`,
-        }}
-      />
+      <Stack.Screen name='ProfileList' component={ProfileList} />
+      <Stack.Screen name='FriendList' component={FriendList} />
       <Stack.Screen
         name='Profile'
         component={Profile}
@@ -59,10 +47,6 @@ export default function App() {
   return (
     <NavigationContainer>
       <MyStack />
-      {/* <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-        <StatusBar style='auto' />
-      </View> */}
     </NavigationContainer>
   );
 }

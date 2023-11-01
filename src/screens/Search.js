@@ -1,36 +1,105 @@
-import { Alert, Image, ScrollView, StyleSheet, View } from 'react-native';
-import React, { useState } from 'react';
+import { Alert, Image, Modal, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { globalStyles } from '../styles.js/AppStyles';
 import CustomTextInput from '../components/CustomTextInput';
 import Colors from '../styles.js/Colors';
 import CustomButton from '../components/CustomButton';
 import api from '../api/api';
+import { getUserDarkMode, getUserLanguage, setUserDarkMode, setUserLanguage } from '../api/storage';
+import { Picker } from '@react-native-picker/picker';
+import getLocale from '../constants/localization';
 
 const Search = ({ navigation }) => {
   const [login, setLogin] = useState('valecart');
+  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [language, setLanguage] = useState('fr');
+  const currentStyle = darkMode ? darkModeStyles : styles;
+  const languages = [
+    {
+      name: 'Français',
+      code: 'fr',
+    },
+    {
+      name: 'English',
+      code: 'en',
+    },
+  ];
+
+  useEffect(() => {
+    initialValues();
+  }, []);
+
+  const initialValues = async () => {
+    const userDarkMode = await getUserDarkMode();
+    const userLanguage = await getUserLanguage();
+    setDarkMode(userDarkMode);
+    setLanguage(userLanguage);
+    console.log('userDarkMode', userDarkMode);
+    console.log('userLanguage', userLanguage);
+  };
+
+  const handleLanguage = (language) => {
+    setLanguage(language);
+    setUserLanguage(language);
+  };
+
+  const handleDarkMode = (darkMode) => {
+    setDarkMode(darkMode);
+    setUserDarkMode(darkMode);
+  };
 
   const handleSearch = async () => {
     if (login.length >= 3) {
       console.log('fetching user', login, '...');
       const result = await api.fetch('users', login.toLowerCase());
       // console.log('result', result);
-      navigation.navigate('ProfileList', { users: result, login });
+      navigation.navigate('ProfileList', { users: result, login, language, darkMode });
     } else {
-      Alert.alert('Erreur', 'Login doit contenir au moins 3 caractères', [{ text: 'OK' }]);
+      Alert.alert('Erreur', getLocale(language, 'loginError'), [{ text: 'OK' }]);
     }
   };
   return (
-    <ScrollView contentContainerStyle={styles.scrollView} keyboardDismissMode='on-drag'>
-      <View style={{ ...globalStyles.container, ...styles.searchContainer }}>
+    <ScrollView contentContainerStyle={currentStyle.scrollView} keyboardDismissMode='on-drag'>
+      <View style={{ ...globalStyles.container, ...currentStyle.searchContainer }}>
         <View>
-          <Image style={styles.logo} source={require('../../assets/42logo.png')} />
+          <Image style={currentStyle.logo} source={darkMode ? require('../../assets/42logo-darkmode.png') : require('../../assets/42logo.png')} />
         </View>
 
-        <CustomTextInput style={{ ...globalStyles.textInput, ...globalStyles.mv10 }} placeholder='Rechercher un login' value={login} onChangeText={(text) => setLogin(text)} />
-
-        {/* <Button title='Search' onPress={handleSearch} /> */}
-        <CustomButton title='Search' onPress={handleSearch} plainColor={true} block={true} />
-        <CustomButton title='Friends' onPress={() => navigation.navigate('FriendList')} plainColor={true} block={true} color={Colors.success} />
+        <CustomTextInput
+          style={{ ...globalStyles.textInput, ...globalStyles.mv10 }}
+          placeholder={getLocale(language, 'searchLogin')}
+          value={login}
+          onChangeText={(text) => setLogin(text)}
+        />
+        <CustomButton title={getLocale(language, 'search')} onPress={handleSearch} plainColor={true} block={true} />
+        <CustomButton
+          title={getLocale(language, 'friends')}
+          onPress={() => navigation.navigate('FriendList', { language, darkMode })}
+          plainColor={true}
+          block={true}
+          color={Colors.success}
+        />
+        <CustomButton title={getLocale(language, 'settings')} onPress={() => setSettingsModalVisible(true)} plainColor={true} block={true} color={Colors.warning} />
+        <Modal animationType='slide' visible={settingsModalVisible} presentationStyle='pageSheet'>
+          <View style={currentStyle.scrollView}>
+            <CustomButton title={getLocale(language, 'close')} onPress={() => setSettingsModalVisible(false)} plainColor={true} block={true} color={Colors.warning} />
+            <View style={{ marginTop: 20 }}>
+              <View style={currentStyle.setting}>
+                <Text style={{ ...currentStyle.settingTitle, marginBottom: 10 }}>{getLocale(language, 'darkmode')}</Text>
+                <Switch value={darkMode} onValueChange={(value) => handleDarkMode(value)} />
+              </View>
+              <View>
+                <Text style={currentStyle.settingTitle}>{getLocale(language, 'language')}</Text>
+                <Picker style={currentStyle.picker} selectedValue={language} onValueChange={(itemValue) => handleLanguage(itemValue)}>
+                  {languages.map((lang) => (
+                    <Picker.Item key={lang.code} label={lang.name} value={lang.code} color={darkMode ? 'white' : ''} />
+                  ))}
+                </Picker>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     </ScrollView>
   );
@@ -51,5 +120,46 @@ const styles = StyleSheet.create({
   logo: {
     width: 200,
     height: 200,
+  },
+  picker: {
+    marginVertical: -20,
+  },
+  setting: {
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 50,
+  },
+  settingTitle: {
+    fontSize: 20,
+    textAlign: 'center',
+  },
+});
+
+const darkModeStyles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+    backgroundColor: Colors.darkBackground,
+  },
+  searchContainer: {
+    marginTop: 100,
+    alignItems: 'center',
+    padding: 20,
+  },
+  logo: {
+    width: 200,
+    height: 200,
+  },
+  picker: {
+    marginVertical: -20,
+  },
+  setting: {
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 50,
+  },
+  settingTitle: {
+    fontSize: 20,
+    textAlign: 'center',
+    color: Colors.white,
   },
 });

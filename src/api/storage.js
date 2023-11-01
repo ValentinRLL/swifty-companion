@@ -17,14 +17,6 @@ export const setAccessToken = async (token) => {
   }
 };
 
-export const deleteAccessToken = async () => {
-  try {
-    await AsyncStorage.removeItem('accessToken');
-  } catch (error) {
-    throw error;
-  }
-};
-
 export const getFriendList = async () => {
   try {
     const friendList = await AsyncStorage.getItem('friendList');
@@ -71,6 +63,40 @@ export const userIsFriend = async (friendToCheck) => {
       const isFriend = friendList.includes(friendToCheck);
       return isFriend;
     }
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getUserDarkMode = async () => {
+  try {
+    const darkMode = await AsyncStorage.getItem('darkMode');
+    return darkMode ? JSON.parse(darkMode) : false;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const setUserDarkMode = async (darkMode) => {
+  try {
+    await AsyncStorage.setItem('darkMode', JSON.stringify(darkMode));
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getUserLanguage = async () => {
+  try {
+    const language = await AsyncStorage.getItem('language');
+    return language ? JSON.parse(language) : 'fr';
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const setUserLanguage = async (language) => {
+  try {
+    await AsyncStorage.setItem('language', JSON.stringify(language));
   } catch (error) {
     throw error;
   }

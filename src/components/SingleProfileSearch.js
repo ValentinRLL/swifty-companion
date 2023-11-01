@@ -6,8 +6,9 @@ import Avatar from './Avatar';
 import { capitalize, getRole } from '../helpers/functions';
 import { useNavigation } from '@react-navigation/native';
 
-const SingleProfileSearch = ({ user }) => {
+const SingleProfileSearch = ({ user, language, darkMode }) => {
   const navigation = useNavigation();
+  const currentStyle = darkMode ? darkModeStyles : styles;
   return (
     // <View style={styles.profileContainer}>
     <Pressable
@@ -15,21 +16,21 @@ const SingleProfileSearch = ({ user }) => {
         {
           backgroundColor: pressed ? Colors.clicked : Colors.transparent,
         },
-        styles.profileContainer,
+        currentStyle.profileContainer,
       ]}
-      onPress={() => navigation.navigate('Profile', user)}
+      onPress={() => navigation.navigate('Profile', { user, language, darkMode })}
     >
       <View>
         <Avatar image={user.image.versions.small} size={125} online={user.location} />
       </View>
-      <View style={styles.loginContainer}>
-        <Text style={styles.login}>{capitalize(user.login)}</Text>
-        <Text style={styles.displayname}>
-          {getRole(user)[0]} {user.displayname}
+      <View style={currentStyle.loginContainer}>
+        <Text style={currentStyle.login}>{capitalize(user.login)}</Text>
+        <Text style={currentStyle.displayname}>
+          {getRole(user, language)[0]} {user.displayname}
         </Text>
       </View>
-      <View style={styles.arrowForward}>
-        <MaterialIcons name='arrow-forward-ios' size={24} color={Colors.black} />
+      <View style={currentStyle.arrowForward}>
+        <MaterialIcons name='arrow-forward-ios' size={24} color={darkMode ? Colors.white : Colors.black} />
       </View>
     </Pressable>
     // </View>
@@ -60,5 +61,29 @@ const styles = StyleSheet.create({
   displayname: {
     fontSize: 16,
     fontStyle: 'italic',
+  },
+});
+
+const darkModeStyles = StyleSheet.create({
+  profileContainer: {
+    padding: 10,
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  loginContainer: {
+    marginLeft: 20,
+  },
+  arrowForward: {
+    marginLeft: 'auto',
+  },
+  login: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    color: Colors.white,
+  },
+  displayname: {
+    fontSize: 16,
+    fontStyle: 'italic',
+    color: Colors.white,
   },
 });

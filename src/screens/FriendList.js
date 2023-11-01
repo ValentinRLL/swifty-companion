@@ -6,18 +6,29 @@ import api from '../api/api';
 import Header from '../components/Header';
 import Loading from '../components/Loading';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import getLocale from '../constants/localization';
+import Colors from '../styles.js/Colors';
 
-const FriendList = () => {
+const FriendList = ({ navigation, route }) => {
   const [friends, setFriends] = useState();
   const [refreshing, setRefreshing] = useState(false);
+  const { language, darkMode } = route.params;
+  const currentStyle = darkMode ? darkModeStyles : styles;
+
   useEffect(() => {
     getFriendListFromStorage();
+    console.log('language', language);
+    navigation.setOptions({
+      headerTitle: getLocale(language, 'friendList'),
+    });
   }, []);
+
   const getFriendListFromStorage = async () => {
     const uids = await getFriendList();
     const result = await api.fetch('users', uids);
     setFriends(result);
   };
+
   const displayFriends = () => {
     if (friends) {
       if (friends.length > 0) {
@@ -34,12 +45,12 @@ const FriendList = () => {
               />
             }
             data={friends}
-            renderItem={({ item }) => <SingleProfileSearch user={item} />}
+            renderItem={({ item }) => <SingleProfileSearch user={item} language={language} darkMode={darkMode} />}
             keyExtractor={(item) => item.id}
           />
         );
       } else {
-        return <Text>Vous n'avez pas d'amis</Text>;
+        return <Text>{getLocale(language, 'noFriend')}</Text>;
       }
     } else {
       return <Loading />;
@@ -47,11 +58,22 @@ const FriendList = () => {
   };
   return (
     <Header>
-      <View style={{ flex: 1 }}>{displayFriends()}</View>
+      <View style={currentStyle.container}>{displayFriends()}</View>
     </Header>
   );
 };
 
 export default FriendList;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
+
+const darkModeStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.darkBackground,
+  },
+});
