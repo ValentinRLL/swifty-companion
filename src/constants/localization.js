@@ -24,6 +24,8 @@ const localization = {
     deactivated: 'Désactivé',
     projects: 'Projets',
     lvl: 'niv.',
+    apiError: 'Erreur API',
+    skills: 'Compétences',
   },
   en: {
     login: 'Login',
@@ -50,6 +52,8 @@ const localization = {
     deactivated: 'Deactivated',
     projects: 'Projects',
     lvl: 'lvl.',
+    apiError: 'API Error',
+    skills: 'Skills',
   },
 };
 

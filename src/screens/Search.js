@@ -1,4 +1,4 @@
-import { Alert, Image, Modal, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Alert, Animated, Easing, Image, Modal, ScrollView, StyleSheet, Switch, Text, TouchableWithoutFeedback, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { globalStyles } from '../styles.js/AppStyles';
 import CustomTextInput from '../components/CustomTextInput';
@@ -14,6 +14,7 @@ const Search = ({ navigation }) => {
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState('fr');
+  const [count, setCount] = useState(0);
   const currentStyle = darkMode ? darkModeStyles : styles;
   const languages = [
     {
@@ -52,18 +53,44 @@ const Search = ({ navigation }) => {
   const handleSearch = async () => {
     if (login.length >= 3) {
       console.log('fetching user', login, '...');
-      const result = await api.fetch('users', login.toLowerCase());
-      // console.log('result', result);
+      let result = null;
+      try {
+        result = await api.fetch('users', login.toLowerCase());
+      } catch (err) {
+        Alert.alert(getLocale(language, 'error'), getLocale(language, 'apiError'), [{ text: 'OK' }]);
+      }
       navigation.navigate('ProfileList', { users: result, login, language, darkMode });
     } else {
-      Alert.alert('Erreur', getLocale(language, 'loginError'), [{ text: 'OK' }]);
+      Alert.alert(getLocale(language, 'error'), getLocale(language, 'loginError'), [{ text: 'OK' }]);
     }
   };
+
+  const spinValue = new Animated.Value(0);
+
+  // First set up animation
+  Animated.timing(spinValue, {
+    toValue: 1,
+    duration: 500,
+    easing: Easing.linear,
+    useNativeDriver: true,
+  }).start();
+
+  const spin = spinValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
+
   return (
     <ScrollView contentContainerStyle={currentStyle.scrollView} keyboardDismissMode='on-drag'>
       <View style={{ ...globalStyles.container, ...currentStyle.searchContainer }}>
         <View>
-          <Image style={currentStyle.logo} source={darkMode ? require('../../assets/42logo-darkmode.png') : require('../../assets/42logo.png')} />
+          <TouchableWithoutFeedback onPress={() => setCount(count + 1)}>
+            {count >= 5 ? (
+              <Animated.Image style={{ ...currentStyle.logo, transform: [{ rotate: spin }] }} source={require('../../assets/msn-logo.png')} />
+            ) : (
+              <Image style={currentStyle.logo} source={darkMode ? require('../../assets/42logo-darkmode.png') : require('../../assets/42logo.png')} />
+            )}
+          </TouchableWithoutFeedback>
         </View>
 
         <CustomTextInput
