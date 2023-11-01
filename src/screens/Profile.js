@@ -78,6 +78,7 @@ const Profile = ({ route, navigation }) => {
             <Text style={{ ...currentStyle.headerText, ...currentStyle.login }}>{capitalize(user.login)}</Text>
             <Text style={{ ...currentStyle.headerText, ...currentStyle.displayname }}>{user.displayname}</Text>
             <Text style={currentStyle.headerText}>{getRole(user, language).join(' ')}</Text>
+            {user.location && <Text style={currentStyle.headerText}>📍 {user.location}</Text>}
           </View>
         </View>
       </View>
@@ -86,7 +87,7 @@ const Profile = ({ route, navigation }) => {
 
   return (
     <Header content={<HeaderContent />}>
-      <ScrollView style={{ ...currentStyle.container, flex: 1 }}>
+      <View style={{ ...currentStyle.container, flex: 1 }}>
         <View>
           {cursus ? (
             <Fragment>
@@ -103,6 +104,24 @@ const Profile = ({ route, navigation }) => {
                 ))}
               </Picker>
             </Fragment>
+          ) : (
+            <Loading />
+          )}
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={currentStyle.categoryTitle}>{getLocale(language, 'skills')}</Text>
+          {selectedCursus ? (
+            <FlatList
+              contentContainerStyle={currentStyle.projects}
+              data={selectedCursus.skills}
+              renderItem={({ item }) => (
+                <View style={currentStyle.project}>
+                  <Text style={currentStyle.projectName}>{item.name}</Text>
+                  <Text style={currentStyle.projectName}>{item.level.toFixed(2) || '-'}</Text>
+                </View>
+              )}
+              keyExtractor={(item) => item.id}
+            />
           ) : (
             <Loading />
           )}
@@ -125,25 +144,7 @@ const Profile = ({ route, navigation }) => {
             <Loading />
           )}
         </View>
-        <View>
-          <Text style={currentStyle.categoryTitle}>{getLocale(language, 'skills')}</Text>
-          {selectedCursus ? (
-            <FlatList
-              contentContainerStyle={currentStyle.projects}
-              data={selectedCursus.skills}
-              renderItem={({ item }) => (
-                <View style={currentStyle.project}>
-                  <Text style={currentStyle.projectName}>{item.name}</Text>
-                  <Text style={currentStyle.projectName}>{item.level || '-'}</Text>
-                </View>
-              )}
-              keyExtractor={(item) => item.id}
-            />
-          ) : (
-            <Loading />
-          )}
-        </View>
-      </ScrollView>
+      </View>
     </Header>
   );
 };

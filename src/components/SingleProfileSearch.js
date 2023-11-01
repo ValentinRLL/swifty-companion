@@ -28,6 +28,7 @@ const SingleProfileSearch = ({ user, language, darkMode }) => {
         <Text style={currentStyle.displayname}>
           {getRole(user, language)[0]} {user.displayname}
         </Text>
+        {user.location && <Text style={currentStyle.location}>📍 {user.location}</Text>}
       </View>
       <View style={currentStyle.arrowForward}>
         <MaterialIcons name='arrow-forward-ios' size={24} color={darkMode ? Colors.white : Colors.black} />
@@ -62,6 +63,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontStyle: 'italic',
   },
+  location: {
+    fontSize: 16,
+  },
 });
 
 const darkModeStyles = StyleSheet.create({
@@ -84,6 +88,10 @@ const darkModeStyles = StyleSheet.create({
   displayname: {
     fontSize: 16,
     fontStyle: 'italic',
+    color: Colors.white,
+  },
+  location: {
+    fontSize: 16,
     color: Colors.white,
   },
 });
