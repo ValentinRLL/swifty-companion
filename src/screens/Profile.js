@@ -1,4 +1,4 @@
-import { Alert, FlatList, StyleSheet, Text, View } from 'react-native';
+import { Alert, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
 import React, { Fragment, useEffect, useState } from 'react';
 import Avatar from '../components/Avatar';
 import Header from '../components/Header';
@@ -86,7 +86,7 @@ const Profile = ({ route, navigation }) => {
 
   return (
     <Header content={<HeaderContent />}>
-      <View style={{ ...currentStyle.container, flex: 1 }}>
+      <ScrollView style={{ ...currentStyle.container, flex: 1 }}>
         <View>
           {cursus ? (
             <Fragment>
@@ -125,7 +125,25 @@ const Profile = ({ route, navigation }) => {
             <Loading />
           )}
         </View>
-      </View>
+        <View>
+          <Text style={currentStyle.categoryTitle}>{getLocale(language, 'skills')}</Text>
+          {selectedCursus ? (
+            <FlatList
+              contentContainerStyle={currentStyle.projects}
+              data={selectedCursus.skills}
+              renderItem={({ item }) => (
+                <View style={currentStyle.project}>
+                  <Text style={currentStyle.projectName}>{item.name}</Text>
+                  <Text style={currentStyle.projectName}>{item.level || '-'}</Text>
+                </View>
+              )}
+              keyExtractor={(item) => item.id}
+            />
+          ) : (
+            <Loading />
+          )}
+        </View>
+      </ScrollView>
     </Header>
   );
 };
@@ -163,7 +181,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   categoryTitle: {
-    fontSize: 24,
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginBottom: 10,
     paddingHorizontal: 9,
   },
   projects: {
@@ -224,7 +244,9 @@ const darkModeStyles = StyleSheet.create({
     color: Colors.white,
   },
   categoryTitle: {
-    fontSize: 24,
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginBottom: 10,
     paddingHorizontal: 9,
     color: Colors.white,
   },
