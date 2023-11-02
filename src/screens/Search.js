@@ -1,6 +1,10 @@
 import { Alert, Animated, Easing, Image, Modal, ScrollView, StyleSheet, Switch, Text, TouchableWithoutFeedback, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { globalStyles } from '../styles.js/AppStyles';
+import {
+  /* In the given code, there is no variable or reference to `a`. Therefore, it is not doing
+anything in this context. */
+  globalStyles,
+} from '../styles.js/AppStyles';
 import CustomTextInput from '../components/CustomTextInput';
 import Colors from '../styles.js/Colors';
 import CustomButton from '../components/CustomButton';
@@ -8,6 +12,9 @@ import api from '../api/api';
 import { getUserDarkMode, getUserLanguage, setUserDarkMode, setUserLanguage } from '../api/storage';
 import { Picker } from '@react-native-picker/picker';
 import getLocale from '../constants/localization';
+import Header from '../components/Header';
+import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const Search = ({ navigation }) => {
   const [login, setLogin] = useState('valecart');
@@ -81,9 +88,17 @@ const Search = ({ navigation }) => {
   });
 
   return (
-    <ScrollView contentContainerStyle={currentStyle.scrollView} keyboardDismissMode='on-drag'>
-      <View style={{ ...globalStyles.container, ...currentStyle.searchContainer }}>
-        <View>
+    <View style={{ flex: 1, ...currentStyle.container }}>
+      <View style={currentStyle.header}>
+        <LinearGradient
+          style={{ ...globalStyles.headerContainer, ...currentStyle.gradient }}
+          colors={darkMode ? [Colors.darkGradientPrimary[0], Colors.darkGradientPrimary[1]] : [Colors.gradientPrimary[0], Colors.gradientPrimary[1]]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+        >
+          <View style={currentStyle.settingButton}>
+            <MaterialIcons name='settings' size={36} color={darkMode ? Colors.white : Colors.primary} onPress={() => setSettingsModalVisible(true)} />
+          </View>
           <TouchableWithoutFeedback onPress={() => setCount(count + 1)}>
             {count >= 5 ? (
               <Animated.Image style={{ ...currentStyle.logo, transform: [{ rotate: spin }] }} source={require('../../assets/msn-logo.png')} />
@@ -91,44 +106,58 @@ const Search = ({ navigation }) => {
               <Image style={currentStyle.logo} source={darkMode ? require('../../assets/42logo-darkmode.png') : require('../../assets/42logo.png')} />
             )}
           </TouchableWithoutFeedback>
-        </View>
-
-        <CustomTextInput
-          style={{ ...globalStyles.textInput, ...globalStyles.mv10 }}
-          placeholder={getLocale(language, 'searchLogin')}
-          value={login}
-          onChangeText={(text) => setLogin(text)}
-        />
-        <CustomButton title={getLocale(language, 'search')} onPress={handleSearch} plainColor={true} block={true} />
-        <CustomButton
-          title={getLocale(language, 'friends')}
-          onPress={() => navigation.navigate('FriendList', { language, darkMode })}
-          plainColor={true}
-          block={true}
-          color={Colors.success}
-        />
-        <CustomButton title={getLocale(language, 'settings')} onPress={() => setSettingsModalVisible(true)} plainColor={true} block={true} color={Colors.warning} />
-        <Modal animationType='slide' visible={settingsModalVisible} presentationStyle='pageSheet'>
-          <View style={currentStyle.scrollView}>
-            <CustomButton title={getLocale(language, 'close')} onPress={() => setSettingsModalVisible(false)} plainColor={true} block={true} color={Colors.warning} />
-            <View style={{ marginTop: 20 }}>
-              <View style={currentStyle.setting}>
-                <Text style={{ ...currentStyle.settingTitle, marginBottom: 10 }}>{getLocale(language, 'darkmode')}</Text>
-                <Switch value={darkMode} onValueChange={(value) => handleDarkMode(value)} />
+          <Image style={currentStyle.wave} source={darkMode ? require('../../assets/wave-darkmode.png') : require('../../assets/wave.png')} />
+        </LinearGradient>
+      </View>
+      <ScrollView contentContainerStyle={currentStyle.scrollView} keyboardDismissMode='on-drag'>
+        <View style={{ ...globalStyles.container, ...currentStyle.searchContainer }}>
+          <View style={currentStyle.titleContainer}>
+            <Text style={currentStyle.title}>Welcome Back!</Text>
+          </View>
+          <View style={currentStyle.titleContainer}>
+            <Text style={currentStyle.subTitle}>Recherche de login</Text>
+          </View>
+          <CustomTextInput
+            style={{ ...globalStyles.textInput, ...globalStyles.mv10 }}
+            placeholder={getLocale(language, 'searchLogin')}
+            value={login}
+            onChangeText={(text) => setLogin(text)}
+          />
+          <CustomButton title={getLocale(language, 'search')} onPress={handleSearch} plainColor={true} block={true} />
+          <CustomButton
+            title={getLocale(language, 'friends')}
+            onPress={() => navigation.navigate('FriendList', { language, darkMode })}
+            plainColor={true}
+            block={true}
+            color={Colors.secondary}
+          />
+          <Modal animationType='slide' visible={settingsModalVisible} presentationStyle='pageSheet'>
+            <View style={currentStyle.scrollView}>
+              <View style={{ ...currentStyle.titleContainer, marginLeft: 20 }}>
+                <Text style={currentStyle.title}>{getLocale(language, 'settings')}</Text>
               </View>
-              <View>
-                <Text style={currentStyle.settingTitle}>{getLocale(language, 'language')}</Text>
-                <Picker style={currentStyle.picker} selectedValue={language} onValueChange={(itemValue) => handleLanguage(itemValue)}>
-                  {languages.map((lang) => (
-                    <Picker.Item key={lang.code} label={lang.name} value={lang.code} color={darkMode ? 'white' : ''} />
-                  ))}
-                </Picker>
+              <View style={{ marginTop: 20 }}>
+                <View style={currentStyle.setting}>
+                  <Text style={{ ...currentStyle.settingTitle, marginBottom: 10 }}>{getLocale(language, 'darkmode')}</Text>
+                  <Switch value={darkMode} onValueChange={(value) => handleDarkMode(value)} />
+                </View>
+                <View>
+                  <Text style={currentStyle.settingTitle}>{getLocale(language, 'language')}</Text>
+                  <Picker style={currentStyle.picker} selectedValue={language} onValueChange={(itemValue) => handleLanguage(itemValue)}>
+                    {languages.map((lang) => (
+                      <Picker.Item key={lang.code} label={lang.name} value={lang.code} color={darkMode ? 'white' : ''} />
+                    ))}
+                  </Picker>
+                  <View style={{ paddingHorizontal: 20 }}>
+                    <CustomButton title={getLocale(language, 'close')} onPress={() => setSettingsModalVisible(false)} plainColor={true} block={true} color={Colors.primary} />
+                  </View>
+                </View>
               </View>
             </View>
-          </View>
-        </Modal>
-      </View>
-    </ScrollView>
+          </Modal>
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
@@ -137,16 +166,18 @@ export default Search;
 const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
-    backgroundColor: Colors.bgBlue,
+    backgroundColor: Colors.white,
   },
   searchContainer: {
-    marginTop: 100,
     alignItems: 'center',
     padding: 20,
   },
   logo: {
     width: 200,
     height: 200,
+    alignSelf: 'center',
+    marginTop: -20,
+    marginBottom: 15,
   },
   picker: {
     marginVertical: -20,
@@ -160,6 +191,37 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
   },
+  settingButton: {
+    alignSelf: 'flex-end',
+    marginRight: 20,
+    marginTop: -40,
+  },
+  gradient: {
+    paddingTop: 100,
+  },
+  wave: {
+    width: '100%',
+    height: 30,
+    resizeMode: 'stretch',
+  },
+  titleContainer: {
+    alignItems: 'flex-start',
+    width: '100%',
+    marginTop: 50,
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: Colors.black,
+  },
+  subTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: Colors.black,
+  },
+  container: {
+    backgroundColor: Colors.white,
+  },
 });
 
 const darkModeStyles = StyleSheet.create({
@@ -168,13 +230,15 @@ const darkModeStyles = StyleSheet.create({
     backgroundColor: Colors.darkBackground,
   },
   searchContainer: {
-    marginTop: 100,
     alignItems: 'center',
     padding: 20,
   },
   logo: {
     width: 200,
     height: 200,
+    alignSelf: 'center',
+    marginTop: -20,
+    marginBottom: 15,
   },
   picker: {
     marginVertical: -20,
@@ -188,5 +252,35 @@ const darkModeStyles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
     color: Colors.white,
+  },
+  settingButton: {
+    alignSelf: 'flex-end',
+    marginRight: 20,
+  },
+  gradient: {
+    paddingTop: 100,
+  },
+  wave: {
+    width: '100%',
+    height: 30,
+    resizeMode: 'stretch',
+  },
+  titleContainer: {
+    alignItems: 'flex-start',
+    width: '100%',
+    marginTop: 50,
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: Colors.white,
+  },
+  subTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: Colors.white,
+  },
+  container: {
+    backgroundColor: Colors.darkBackground,
   },
 });

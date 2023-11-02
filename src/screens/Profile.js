@@ -86,8 +86,8 @@ const Profile = ({ route, navigation }) => {
   };
 
   return (
-    <Header content={<HeaderContent />}>
-      <View style={{ ...currentStyle.container, flex: 1 }}>
+    <Header content={<HeaderContent />} darkMode={darkMode}>
+      <View style={{ ...currentStyle.container }}>
         <View>
           {cursus ? (
             <Fragment>
@@ -152,7 +152,7 @@ const Profile = ({ route, navigation }) => {
 export default Profile;
 
 const styles = StyleSheet.create({
-  container: {},
+  container: { flex: 1, backgroundColor: Colors.white },
   avatarContainer: {
     padding: 30,
     marginLeft: 10,
@@ -212,9 +212,7 @@ const styles = StyleSheet.create({
 });
 
 const darkModeStyles = StyleSheet.create({
-  container: {
-    backgroundColor: Colors.darkBackground,
-  },
+  container: { flex: 1, backgroundColor: Colors.darkBackground },
   avatarContainer: {
     padding: 30,
     marginLeft: 10,

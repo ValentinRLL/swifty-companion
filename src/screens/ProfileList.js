@@ -18,9 +18,9 @@ const ProfileList = ({ navigation, route }) => {
     <View style={{ ...globalStyles.container, ...currentStyle.container }}>
       <LinearGradient
         style={{ ...globalStyles.headerContainer, ...currentStyle.gradient }}
-        colors={[Colors.gradientPrimary[0], Colors.gradientPrimary[1]]}
-        start={{ x: 0, y: 1 }}
-        end={{ x: 1, y: 1 }}
+        colors={darkMode ? [Colors.darkGradientPrimary[0], Colors.darkGradientPrimary[1]] : [Colors.gradientPrimary[0], Colors.gradientPrimary[1]]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
       >
         <View style={currentStyle.headerTextContainer}>
           <Text style={currentStyle.headerText}>{getLocale(language, 'searchResult', [login])}</Text>
@@ -42,9 +42,10 @@ export default ProfileList;
 const styles = StyleSheet.create({
   container: {
     marginTop: -100,
+    backgroundColor: Colors.white,
   },
   gradient: {
-    paddingTop: 100,
+    paddingTop: 150,
   },
   flatList: {
     flex: 1,
@@ -56,12 +57,14 @@ const styles = StyleSheet.create({
   },
   headerTextContainer: {
     justifyContent: 'center',
-    paddingVertical: 40,
+    paddingTop: 40,
+    paddingBottom: 80,
     paddingHorizontal: 20,
   },
   headerText: {
-    color: Colors.white,
+    color: Colors.primary,
     fontSize: 20,
+    fontWeight: 'bold',
   },
   subTitle: {
     color: Colors.black,

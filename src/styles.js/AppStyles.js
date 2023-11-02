@@ -8,11 +8,12 @@ export const globalStyles = StyleSheet.create({
   textInput: {
     // borderColor: 'black',
     // borderWidth: 1,
-    backgroundColor: Colors.white,
-    borderRadius: 5,
-    padding: 10,
+    backgroundColor: Colors.inputBackground,
+    borderRadius: 50,
+    padding: 15,
     paddingLeft: 20,
     fontSize: 20,
+    color: Colors.black,
   },
   headerContainer: {
     // padding: 50,

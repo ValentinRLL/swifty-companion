@@ -19,6 +19,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     borderRadius: 7,
     marginVertical: 10,
+    padding: 15,
+    borderRadius: 50,
   },
   block: {
     width: '100%',
