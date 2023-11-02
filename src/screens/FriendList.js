@@ -1,11 +1,10 @@
 import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getFriendList } from '../api/storage';
 import SingleProfileSearch from '../components/SingleProfileSearch';
 import api from '../api/api';
 import Header from '../components/Header';
 import Loading from '../components/Loading';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import getLocale from '../constants/localization';
 import Colors from '../styles.js/Colors';
 

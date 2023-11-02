@@ -20,7 +20,6 @@ export const setAccessToken = async (token) => {
 export const getFriendList = async () => {
   try {
     const friendList = await AsyncStorage.getItem('friendList');
-    // return array of ids or null
     return friendList ? JSON.parse(friendList) : null;
   } catch (error) {
     throw error;
@@ -42,7 +41,6 @@ export const addFriendInList = async (newFriend) => {
 
 export const deleteFriendFromList = async (friendToDelete) => {
   try {
-    // friendList is an array of numbers
     const friendList = await getFriendList();
     console.log('friends', friendList);
     if (friendList) {
@@ -58,7 +56,6 @@ export const deleteFriendFromList = async (friendToDelete) => {
 export const userIsFriend = async (friendToCheck) => {
   try {
     const friendList = await getFriendList();
-    // friendList is an array of numbers
     if (friendList) {
       const isFriend = friendList.includes(friendToCheck);
       return isFriend;

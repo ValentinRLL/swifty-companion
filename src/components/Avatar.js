@@ -7,12 +7,6 @@ const Avatar = ({ image, size, online }) => {
     online: require('../../assets/frames/online.png'),
     offline: require('../../assets/frames/offline.png'),
   };
-  // const status = [
-  //   require('../../assets/frames/online.png'),
-  //   require('../../assets/frames/offline.png'),
-  //   require('../../assets/frames/away.png'),
-  //   require('../../assets/frames/busy.png'),
-  // ];
   return (
     <ImageBackground style={{ ...styles.frame, width: avatarSize, height: avatarSize }} source={status[online ? 'online' : 'offline']}>
       <Image style={{ ...styles.image, width: avatarSize * 0.85, height: avatarSize * 0.85 }} source={{ uri: image }} />

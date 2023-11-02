@@ -1,10 +1,6 @@
 import { Alert, Animated, Easing, Image, Modal, ScrollView, StyleSheet, Switch, Text, TouchableWithoutFeedback, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import {
-  /* In the given code, there is no variable or reference to `a`. Therefore, it is not doing
-anything in this context. */
-  globalStyles,
-} from '../styles.js/AppStyles';
+import { globalStyles } from '../styles.js/AppStyles';
 import CustomTextInput from '../components/CustomTextInput';
 import Colors from '../styles.js/Colors';
 import CustomButton from '../components/CustomButton';
@@ -12,12 +8,11 @@ import api from '../api/api';
 import { getUserDarkMode, getUserLanguage, setUserDarkMode, setUserLanguage } from '../api/storage';
 import { Picker } from '@react-native-picker/picker';
 import getLocale from '../constants/localization';
-import Header from '../components/Header';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const Search = ({ navigation }) => {
-  const [login, setLogin] = useState('valecart');
+  const [login, setLogin] = useState('');
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState('fr');
@@ -43,8 +38,6 @@ const Search = ({ navigation }) => {
     const userLanguage = await getUserLanguage();
     setDarkMode(userDarkMode);
     setLanguage(userLanguage);
-    console.log('userDarkMode', userDarkMode);
-    console.log('userLanguage', userLanguage);
   };
 
   const handleLanguage = (language) => {
@@ -59,7 +52,6 @@ const Search = ({ navigation }) => {
 
   const handleSearch = async () => {
     if (login.length >= 3) {
-      console.log('fetching user', login, '...');
       let result = null;
       try {
         result = await api.fetch('users', login.toLowerCase());
@@ -74,7 +66,6 @@ const Search = ({ navigation }) => {
 
   const spinValue = new Animated.Value(0);
 
-  // First set up animation
   Animated.timing(spinValue, {
     toValue: 1,
     duration: 500,

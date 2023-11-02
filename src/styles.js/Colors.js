@@ -16,7 +16,6 @@ export default {
   darkGradientPrimary: ['#3EB2EB', '#1e293b'],
   lightBackground: '#F2F2F2',
   darkBackground: '#1e293b',
-
   inputBackground: '#EDF3F5',
   inputColor: '#BFC5C6',
 };

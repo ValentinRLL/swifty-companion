@@ -1,8 +1,4 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-
-// Navigation
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Colors from './src/styles.js/Colors';
 import Search from './src/screens/Search';
@@ -50,5 +46,3 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({});

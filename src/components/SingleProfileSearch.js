@@ -1,4 +1,4 @@
-import { Image, ImageBackground, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
 import Colors from '../styles.js/Colors';
@@ -10,7 +10,6 @@ const SingleProfileSearch = ({ user, language, darkMode }) => {
   const navigation = useNavigation();
   const currentStyle = darkMode ? darkModeStyles : styles;
   return (
-    // <View style={styles.profileContainer}>
     <Pressable
       style={({ pressed }) => [
         {
@@ -34,7 +33,6 @@ const SingleProfileSearch = ({ user, language, darkMode }) => {
         <MaterialIcons name='arrow-forward-ios' size={24} color={darkMode ? Colors.white : Colors.black} />
       </View>
     </Pressable>
-    // </View>
   );
 };
 
@@ -42,11 +40,8 @@ export default SingleProfileSearch;
 
 const styles = StyleSheet.create({
   profileContainer: {
-    // backgroundColor: 'salmon',
-    // height: 100,
     padding: 10,
     alignItems: 'center',
-    // marginVertical: 10,
     flexDirection: 'row',
   },
   loginContainer: {

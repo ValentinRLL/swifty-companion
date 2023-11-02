@@ -1,4 +1,4 @@
-import { Alert, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, FlatList, StyleSheet, Text, View } from 'react-native';
 import React, { Fragment, useEffect, useState } from 'react';
 import Avatar from '../components/Avatar';
 import Header from '../components/Header';

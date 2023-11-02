@@ -96,7 +96,7 @@ class Api {
     try {
       const response = await fetch(`${API}/oauth/token/?` + new URLSearchParams(params), options);
       if (!response.ok) {
-        throw new Error(`Network response error ${response.status}: ${response.statusText}`);
+        throw new Error(`API response error ${response.status}: ${response.statusText}`);
       }
       const data = await response.json();
       return data;
@@ -108,7 +108,6 @@ class Api {
 
   async fetcher(type, user) {
     try {
-      // await deleteAccessToken();
       const accessToken = await this.getAccessToken();
 
       const options = {
@@ -124,21 +123,21 @@ class Api {
         client_secret: credentials.client_secret,
       };
 
-      let allResults = [];
-      let lastResult = [];
+      let results = [];
+      let currentResult = [];
       let page = 1;
       let timeSpend = [0, 0];
       const types = ['projects_users', 'cursus_users', 'users'];
       const perPage = 100;
       if (!types.includes(type)) {
-        throw new Error('Wrong type');
+        throw new Error('Bad endpoint type');
       }
 
       do {
-        const dateBefore = new Date();
+        const start = new Date();
         let timeSpendIndex = 0;
 
-        lastResult = await (async () => {
+        currentResult = await (async () => {
           let response = null;
           if (type === 'users') {
             if (Array.isArray(user)) {
@@ -149,7 +148,7 @@ class Api {
           } else {
             response = await fetch(`${API}/${type}?` + new URLSearchParams(params) + `&filter[user_id]=${user}&page=${page}&per_page=${perPage}`, options);
           }
-          if (!response.ok) throw new Error(`Network response error ${response.status}: ${response.statusText}`);
+          if (!response.ok) throw new Error(`API response error ${response.status}: ${response.statusText}`);
 
           timeSpendIndex = response.headers.get('x-secondly-ratelimit-remaining') % 2;
 
@@ -157,21 +156,22 @@ class Api {
           return data;
         })();
         page++;
-        allResults = [...allResults, ...lastResult];
+        results = [...results, ...currentResult];
 
-        const dateAfter = new Date();
+        const end = new Date();
 
-        timeSpend[timeSpendIndex] = dateAfter - dateBefore;
+        timeSpend[timeSpendIndex] = end - start;
 
         const timeLeft = 1500 - (timeSpend[0] + timeSpend[1]);
+
         if (timeSpend[0] !== 0 && timeSpend[1] !== 0 && timeLeft > 0) {
           timeSpend[0] = 0;
           timeSpend[1] = 0;
           await new Promise((resolve) => setTimeout(resolve, timeLeft));
         }
-      } while (lastResult?.length === perPage);
+      } while (currentResult?.length === perPage);
 
-      return allResults;
+      return results;
     } catch (error) {
       console.error('Error during fetch operation:', error);
       throw error;
