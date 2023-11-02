@@ -42,10 +42,8 @@ export const addFriendInList = async (newFriend) => {
 export const deleteFriendFromList = async (friendToDelete) => {
   try {
     const friendList = await getFriendList();
-    console.log('friends', friendList);
     if (friendList) {
       const newFriendList = friendList.filter((friend) => friend !== friendToDelete);
-      console.log('newFriendList', newFriendList);
       await AsyncStorage.setItem('friendList', JSON.stringify(newFriendList));
     }
   } catch (error) {

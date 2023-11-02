@@ -62,7 +62,6 @@ const getLocale = (lang, string, vars) => {
     let locale = localization[lang || 'fr'][string];
     let count = 0;
     locale = locale.replace(/%VAR%/g, () => (vars[count] !== null ? vars[count++] : '%VAR%'));
-    console.log('locale', locale);
     return locale;
   } catch (error) {
     throw error;

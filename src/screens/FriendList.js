@@ -16,7 +16,6 @@ const FriendList = ({ navigation, route }) => {
 
   useEffect(() => {
     getFriendListFromStorage();
-    console.log('language', language);
     navigation.setOptions({
       headerTitle: getLocale(language, 'friendList'),
     });
