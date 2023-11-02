@@ -103,10 +103,10 @@ const Search = ({ navigation }) => {
       <ScrollView contentContainerStyle={currentStyle.scrollView} keyboardDismissMode='on-drag'>
         <View style={{ ...globalStyles.container, ...currentStyle.searchContainer }}>
           <View style={currentStyle.titleContainer}>
-            <Text style={currentStyle.title}>Welcome Back!</Text>
+            <Text style={currentStyle.title}>{getLocale(language, 'welcomeBack')}</Text>
           </View>
           <View style={currentStyle.titleContainer}>
-            <Text style={currentStyle.subTitle}>Recherche de login</Text>
+            <Text style={currentStyle.subTitle}>{getLocale(language, 'searchLogin')}</Text>
           </View>
           <CustomTextInput
             style={{ ...globalStyles.textInput, ...globalStyles.mv10 }}

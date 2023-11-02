@@ -26,6 +26,8 @@ const localization = {
     lvl: 'niv.',
     apiError: 'Erreur API',
     skills: 'Compétences',
+    welcomeBack: 'Bienvenue !',
+    searchLogin: `Rechercher un login`,
   },
   en: {
     login: 'Login',
@@ -54,6 +56,8 @@ const localization = {
     lvl: 'lvl.',
     apiError: 'API Error',
     skills: 'Skills',
+    welcomeBack: 'Welcome back!',
+    searchLogin: `Search a login`,
   },
 };
 
