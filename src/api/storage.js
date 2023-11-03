@@ -20,7 +20,7 @@ export const setAccessToken = async (token) => {
 export const getFriendList = async () => {
   try {
     const friendList = await AsyncStorage.getItem('friendList');
-    return friendList ? JSON.parse(friendList) : null;
+    return friendList ? JSON.parse(friendList) : [];
   } catch (error) {
     throw error;
   }

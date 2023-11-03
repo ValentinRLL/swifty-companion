@@ -122,7 +122,7 @@ const Search = ({ navigation }) => {
             block={true}
             color={Colors.secondary}
           />
-          <Modal animationType='slide' visible={settingsModalVisible} presentationStyle='pageSheet'>
+          <Modal animationType='slide' visible={settingsModalVisible} presentationStyle='pageSheet' onRequestClose={() => setSettingsModalVisible(false)}>
             <View style={currentStyle.scrollView}>
               <View style={{ ...currentStyle.titleContainer, marginLeft: 20 }}>
                 <Text style={currentStyle.title}>{getLocale(language, 'settings')}</Text>

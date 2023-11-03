@@ -16,6 +16,7 @@ const FriendList = ({ navigation, route }) => {
 
   useEffect(() => {
     getFriendListFromStorage();
+
     navigation.setOptions({
       headerTitle: getLocale(language, 'friendList'),
     });
@@ -23,40 +24,47 @@ const FriendList = ({ navigation, route }) => {
 
   const getFriendListFromStorage = async () => {
     const uids = await getFriendList();
+    if (!uids || !uids.length) {
+      setFriends([]);
+      return;
+    }
     const result = await api.fetch('users', uids);
     setFriends(result);
   };
 
-  const displayFriends = () => {
-    if (friends) {
-      if (friends.length > 0) {
-        return (
-          <FlatList
-            refreshControl={
-              <RefreshControl
-                onRefresh={async () => {
-                  setRefreshing(true);
-                  await getFriendListFromStorage();
-                  setRefreshing(false);
-                }}
-                refreshing={refreshing}
-              />
-            }
-            data={friends}
-            renderItem={({ item }) => <SingleProfileSearch user={item} language={language} darkMode={darkMode} />}
-            keyExtractor={(item) => item.id}
-          />
-        );
-      } else {
-        return <Text>{getLocale(language, 'noFriend')}</Text>;
-      }
-    } else {
+  const DisplayFriends = () => {
+    if (!friends) {
       return <Loading />;
     }
+
+    if (friends.length <= 0) {
+      return <Text>{getLocale(language, 'noFriend')}</Text>;
+    }
+
+    return (
+      <FlatList
+        refreshControl={
+          <RefreshControl
+            onRefresh={async () => {
+              setRefreshing(true);
+              await getFriendListFromStorage();
+              setRefreshing(false);
+            }}
+            refreshing={refreshing}
+          />
+        }
+        data={friends}
+        renderItem={({ item }) => <SingleProfileSearch user={item} language={language} darkMode={darkMode} />}
+        keyExtractor={(item) => item.id}
+      />
+    );
   };
+
   return (
     <Header>
-      <View style={currentStyle.container}>{displayFriends()}</View>
+      <View style={currentStyle.container}>
+        <DisplayFriends />
+      </View>
     </Header>
   );
 };
