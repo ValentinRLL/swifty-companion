@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import React from 'react';
-import Colors from '../styles.js/Colors';
+import Colors from '../styles/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
-import { globalStyles } from '../styles.js/AppStyles';
+import { globalStyles } from '../styles/AppStyles';
 
 const Header = ({ content, children, darkMode }) => {
   return (

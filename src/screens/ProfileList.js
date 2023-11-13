@@ -1,8 +1,8 @@
-import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Image, StyleSheet, Text, View, Platform } from 'react-native';
 import React, { useEffect } from 'react';
-import { globalStyles } from '../styles.js/AppStyles';
+import { globalStyles } from '../styles/AppStyles';
 import SingleProfileSearch from '../components/SingleProfileSearch';
-import Colors from '../styles.js/Colors';
+import Colors from '../styles/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
 import getLocale from '../constants/localization';
 
@@ -12,6 +12,9 @@ const ProfileList = ({ navigation, route }) => {
   useEffect(() => {
     navigation.setOptions({
       headerTitle: getLocale(language, 'search'),
+      headerStyle: {
+        backgroundColor: Platform.OS === 'ios' ? 'transparent' : Colors.gradientPrimary[0],
+      },
     });
   }, []);
   return (

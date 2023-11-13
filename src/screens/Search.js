@@ -1,8 +1,8 @@
-import { Alert, Animated, Easing, Image, Modal, ScrollView, StyleSheet, Switch, Text, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, Animated, Easing, Image, Modal, ScrollView, StyleSheet, Switch, Text, TouchableWithoutFeedback, View, Platform } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { globalStyles } from '../styles.js/AppStyles';
+import { globalStyles } from '../styles/AppStyles';
 import CustomTextInput from '../components/CustomTextInput';
-import Colors from '../styles.js/Colors';
+import Colors from '../styles/Colors';
 import CustomButton from '../components/CustomButton';
 import api from '../api/api';
 import { getUserDarkMode, getUserLanguage, setUserDarkMode, setUserLanguage } from '../api/storage';
@@ -136,7 +136,7 @@ const Search = ({ navigation }) => {
                   <Text style={currentStyle.settingTitle}>{getLocale(language, 'language')}</Text>
                   <Picker style={currentStyle.picker} selectedValue={language} onValueChange={(itemValue) => handleLanguage(itemValue)}>
                     {languages.map((lang) => (
-                      <Picker.Item key={lang.code} label={lang.name} value={lang.code} color={darkMode ? 'white' : ''} />
+                      <Picker.Item key={lang.code} label={lang.name} value={lang.code} color={Platform.OS === 'ios' && darkMode ? Colors.white : ''} />
                     ))}
                   </Picker>
                   <View style={{ paddingHorizontal: 20 }}>
@@ -233,6 +233,7 @@ const darkModeStyles = StyleSheet.create({
   },
   picker: {
     marginVertical: -20,
+    color: Colors.white,
   },
   setting: {
     alignItems: 'center',

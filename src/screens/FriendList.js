@@ -1,4 +1,4 @@
-import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, Text, View, Platform } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { getFriendList } from '../api/storage';
 import SingleProfileSearch from '../components/SingleProfileSearch';
@@ -6,7 +6,7 @@ import api from '../api/api';
 import Header from '../components/Header';
 import Loading from '../components/Loading';
 import getLocale from '../constants/localization';
-import Colors from '../styles.js/Colors';
+import Colors from '../styles/Colors';
 
 const FriendList = ({ navigation, route }) => {
   const [friends, setFriends] = useState();
@@ -19,6 +19,9 @@ const FriendList = ({ navigation, route }) => {
 
     navigation.setOptions({
       headerTitle: getLocale(language, 'friendList'),
+      headerStyle: {
+        backgroundColor: Platform.OS === 'ios' ? 'transparent' : Colors.gradientPrimary[0],
+      },
     });
   }, []);
 
@@ -38,7 +41,11 @@ const FriendList = ({ navigation, route }) => {
     }
 
     if (friends.length <= 0) {
-      return <Text>{getLocale(language, 'noFriend')}</Text>;
+      return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ fontSize: 20, color: darkMode ? Colors.white : Colors.black }}>{getLocale(language, 'noFriend')}</Text>
+        </View>
+      );
     }
 
     return (

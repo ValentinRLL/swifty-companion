@@ -1,6 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Colors from './src/styles.js/Colors';
+import Colors from './src/styles/Colors';
 import Search from './src/screens/Search';
 import FriendList from './src/screens/FriendList';
 import Profile from './src/screens/Profile';

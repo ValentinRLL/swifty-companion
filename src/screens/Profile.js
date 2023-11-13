@@ -1,8 +1,8 @@
-import { Alert, FlatList, StyleSheet, Text, View } from 'react-native';
+import { Alert, FlatList, StyleSheet, Text, View, Platform } from 'react-native';
 import React, { Fragment, useEffect, useState } from 'react';
 import Avatar from '../components/Avatar';
 import Header from '../components/Header';
-import Colors from '../styles.js/Colors';
+import Colors from '../styles/Colors';
 import { capitalize, getRole } from '../helpers/functions';
 import { Picker } from '@react-native-picker/picker';
 import api from '../api/api';
@@ -54,6 +54,9 @@ const Profile = ({ route, navigation }) => {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => <AntDesign name={isFriend ? 'deleteuser' : 'adduser'} size={24} color={isFriend ? Colors.danger : Colors.white} onPress={() => handleFriend()} />,
+      headerStyle: {
+        backgroundColor: Platform.OS === 'ios' ? 'transparent' : Colors.gradientPrimary[0],
+      },
     });
   }, [navigation, isFriend]);
 
@@ -100,7 +103,12 @@ const Profile = ({ route, navigation }) => {
                 onValueChange={(itemValue, itemIndex) => setSelectedCursus(cursus[itemIndex])}
               >
                 {cursus.map((c) => (
-                  <Picker.Item key={c?.cursus_id?.toString()} label={c?.cursus?.name?.toString()} value={c?.cursus_id?.toString()} color={darkMode ? Colors.white : Colors.black} />
+                  <Picker.Item
+                    key={c?.cursus_id?.toString()}
+                    label={c?.cursus?.name?.toString()}
+                    value={c?.cursus_id?.toString()}
+                    color={Platform.OS === 'ios' && darkMode ? Colors.white : Colors.black}
+                  />
                 ))}
               </Picker>
             </Fragment>
@@ -235,6 +243,7 @@ const darkModeStyles = StyleSheet.create({
   },
   picker: {
     marginVertical: -20,
+    color: Colors.white,
   },
   cursusChoiceText: {
     textAlign: 'center',

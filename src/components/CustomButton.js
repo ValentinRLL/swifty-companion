@@ -1,11 +1,17 @@
-import { Button, StyleSheet, View } from 'react-native';
+import { Button, StyleSheet, View, Platform, Text, TouchableWithoutFeedback } from 'react-native';
 import React from 'react';
-import Colors from '../styles.js/Colors';
+import Colors from '../styles/Colors';
 
 const CustomButton = ({ title, onPress, plainColor, block, color }) => {
   return (
     <View style={[plainColor ? styles.plainColor : {}, block ? styles.block : {}, color ? { backgroundColor: color, borderColor: color } : {}]}>
-      <Button title={title} onPress={onPress} color={plainColor ? Colors.white : null} />
+      {Platform.OS === 'ios' ? (
+        <Button title={title} onPress={onPress} color={plainColor ? Colors.white : null} />
+      ) : (
+        <TouchableWithoutFeedback onPress={onPress}>
+          <Text style={{ textAlign: 'center', color: Colors.white }}>{title}</Text>
+        </TouchableWithoutFeedback>
+      )}
     </View>
   );
 };

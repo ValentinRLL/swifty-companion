@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
-import Colors from '../styles.js/Colors';
+import Colors from '../styles/Colors';
 import Avatar from './Avatar';
 import { capitalize, getRole } from '../helpers/functions';
 import { useNavigation } from '@react-navigation/native';
